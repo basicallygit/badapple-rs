@@ -5,6 +5,7 @@ use std::time::Duration;
 const FRAMECOUNT: u16 = 6532;
 const SLEEP_MICROSECONDS: u64 = 32995;
 
+#[derive(Debug, Default)]
 struct BadApple {
     frame_num: u16,
     frames_passed: u16,
@@ -21,6 +22,8 @@ impl BadApple {
         self.frames_passed += 1;
         print!("\x1B[2J\x1B[1;1H");
         println!("| Frame: {} | FPS: {} |\n{}", self.frame_num, self.fps, read_to_string(format!("frames/BA{}.txt", self.frame_num)).unwrap());
+        //debug version
+        //println!("| Frame: {} | FPS: {} |\n{}\n{}", self.frame_num, self.fps, read_to_string(format!("frames/BA{}.txt", self.frame_num)).unwrap(), format!("{:#?}", self));
     }
 
     fn update_fps(&mut self) {
@@ -38,6 +41,8 @@ fn main() {
         bad_apple.next_frame();
         thread::sleep(Duration::from_micros(SLEEP_MICROSECONDS));
         
+        //TODO: seperate thread to update fps instead of checking each frame on the main thread
+        //but it is fine for now
         if previous_secs.elapsed().unwrap().as_millis() >= 500 {
             bad_apple.update_fps();
             previous_secs = std::time::SystemTime::now();
